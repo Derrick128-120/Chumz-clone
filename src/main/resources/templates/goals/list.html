@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Goals · Chumz Clone</title>
+    <link rel="stylesheet" th:href="@{/css/neumorphism.css}">
+</head>
+<body>
+
+<div class="app-shell">
+    <div th:replace="~{fragments/sidebar :: sidebar('goals')}"></div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <div>
+                <h1>Your goals</h1>
+                <p>Every goal is its own little envelope.</p>
+            </div>
+            <a th:href="@{/goals/new}" class="btn btn-primary">+ New goal</a>
+        </div>
+
+        <div class="grid grid-3" th:if="${!goals.isEmpty()}">
+            <div class="goal-card neu-raised-sm" th:each="goal : ${goals}">
+                <div class="icon-badge neu-flat" th:text="${goal.icon != null ? goal.icon : '🎯'}">🎯</div>
+                <h3 th:text="${goal.name}">Goal name</h3>
+                <span class="badge" th:classappend="${goal.status.name() == 'COMPLETED'} ? 'badge-success' : 'badge-muted'"
+                      th:text="${goal.status}">ACTIVE</span>
+                <div class="progress-track">
+                    <div class="progress-fill" th:style="'width: ' + ${goal.progressPercent > 100 ? 100 : goal.progressPercent} + '%'"></div>
+                </div>
+                <div class="amounts">
+                    <span>Saved: <strong th:text="'KES ' + ${#numbers.formatDecimal(goal.currentAmount, 1, 0)}">0</strong></span>
+                    <span>Target: <strong th:text="'KES ' + ${#numbers.formatDecimal(goal.targetAmount, 1, 0)}">0</strong></span>
+                </div>
+                <a th:href="@{/goals/{id}(id=${goal.id})}" class="btn btn-sm btn-block">View goal</a>
+            </div>
+        </div>
+
+        <div class="empty-state neu-raised" th:if="${goals.isEmpty()}">
+            <p>No goals yet. Create your first one to start saving.</p>
+            <a th:href="@{/goals/new}" class="btn btn-primary">+ New goal</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Groups · Chumz Clone</title>
+    <link rel="stylesheet" th:href="@{/css/neumorphism.css}">
+</head>
+<body>
+
+<div class="app-shell">
+    <div th:replace="~{fragments/sidebar :: sidebar('groups')}"></div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <div>
+                <h1>Group savings</h1>
+                <p>Save together with family, friends, or your chama.</p>
+            </div>
+            <div style="display:flex; gap:10px;">
+                <a th:href="@{/groups/new}" class="btn btn-primary">+ New group</a>
+            </div>
+        </div>
+
+        <div class="card neu-raised-sm" style="margin-bottom: 24px;">
+            <form th:action="@{/groups/join}" method="post" style="display:flex; gap:12px; align-items:flex-end;">
+                <div class="field" style="flex:1; margin-bottom:0;">
+                    <label for="inviteCode">Have an invite code?</label>
+                    <input type="text" id="inviteCode" name="inviteCode" placeholder="CHM-XXXXXX" required>
+                </div>
+                <button type="submit" class="btn">Join group</button>
+            </form>
+        </div>
+
+        <div class="grid grid-3" th:if="${!memberships.isEmpty()}">
+            <div class="goal-card neu-raised-sm" th:each="m : ${memberships}">
+                <div class="icon-badge neu-flat">👥</div>
+                <h3 th:text="${m.group.name}">Group name</h3>
+                <div class="progress-track">
+                    <div class="progress-fill"
+                         th:style="'width: ' + ${m.group.groupTargetAmount.compareTo(T(java.math.BigDecimal).ZERO) > 0
+                            ? (m.group.groupCurrentAmount.doubleValue() / m.group.groupTargetAmount.doubleValue() * 100 > 100 ? 100 : m.group.groupCurrentAmount.doubleValue() / m.group.groupTargetAmount.doubleValue() * 100)
+                            : 0} + '%'"></div>
+                </div>
+                <div class="amounts">
+                    <span>Pooled: <strong th:text="'KES ' + ${#numbers.formatDecimal(m.group.groupCurrentAmount, 1, 0)}">0</strong></span>
+                    <span>You: <strong th:text="'KES ' + ${#numbers.formatDecimal(m.totalContributed, 1, 0)}">0</strong></span>
+                </div>
+                <a th:href="@{/groups/{id}(id=${m.group.id})}" class="btn btn-sm btn-block">View group</a>
+            </div>
+        </div>
+
+        <div class="empty-state neu-raised" th:if="${memberships.isEmpty()}">
+            <p>You're not part of any group yet.</p>
+            <a th:href="@{/groups/new}" class="btn btn-primary">+ Start a group</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Log in · Chumz Clone</title>
+    <link rel="stylesheet" th:href="@{/css/neumorphism.css}">
+</head>
+<body>
+
+<div class="auth-shell">
+    <div class="auth-card neu-raised">
+        <div class="brand">💰 Chumz Clone</div>
+        <div class="subtitle">Save a little, save often.</div>
+
+        <div class="alert alert-success" th:if="${param.registered}">
+            Account created — log in to continue.
+        </div>
+        <div class="alert alert-success" th:if="${param.logout}">
+            You've been logged out.
+        </div>
+        <div class="alert alert-error" th:if="${param.error}">
+            Incorrect email or password.
+        </div>
+
+        <form th:action="@{/auth/login}" method="post">
+            <div class="field">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="you@example.com" required>
+            </div>
+            <div class="field">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Log in</button>
+        </form>
+
+        <div class="auth-switch">
+            New here? <a th:href="@{/auth/register}">Create an account</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Reports · Chumz Clone</title>
+    <link rel="stylesheet" th:href="@{/css/neumorphism.css}">
+</head>
+<body>
+
+<div class="app-shell">
+    <div th:replace="~{fragments/sidebar :: sidebar('reports')}"></div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <div>
+                <h1>Your savings report</h1>
+                <p>A full history of every deposit and contribution.</p>
+            </div>
+        </div>
+
+        <div class="grid grid-3" style="margin-bottom: 24px;">
+            <div class="stat-card neu-raised-sm">
+                <div class="label">Total saved</div>
+                <div class="value">KES <span class="accent" th:text="${#numbers.formatDecimal(totalSaved, 1, 2)}">0.00</span></div>
+            </div>
+            <div class="stat-card neu-raised-sm">
+                <div class="label">Goals</div>
+                <div class="value" th:text="${goals.size()}">0</div>
+            </div>
+            <div class="stat-card neu-raised-sm">
+                <div class="label">Longest streak</div>
+                <div class="value" th:text="${user.longestStreakDays} + ' days'">0 days</div>
+            </div>
+        </div>
+
+        <h3 style="margin-bottom: 14px;">Transaction history</h3>
+        <div class="card neu-raised-sm">
+            <div th:if="${transactions.isEmpty()}" class="empty-state">
+                <p>No transactions yet.</p>
+            </div>
+            <div class="txn-row" th:each="txn : ${transactions}">
+                <div class="txn-left">
+                    <div class="txn-icon" th:text="${txn.type.name() == 'DEPOSIT' ? '⬇️' : (txn.type.name() == 'GROUP_CONTRIBUTION' ? '👥' : '⬆️')}">⬇️</div>
+                    <div class="txn-meta">
+                        <span class="title" th:text="${txn.type}">DEPOSIT</span>
+                        <span class="subtitle" th:text="${#temporals.format(txn.createdAt, 'dd MMM yyyy, HH:mm')}">date</span>
+                    </div>
+                </div>
+                <div class="txn-amount positive" th:text="'KES ' + ${#numbers.formatDecimal(txn.amount, 1, 2)}">0.00</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

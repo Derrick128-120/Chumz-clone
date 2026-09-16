@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard · Chumz Clone</title>
+    <link rel="stylesheet" th:href="@{/css/neumorphism.css}">
+</head>
+<body>
+
+<div class="app-shell">
+    <div th:replace="~{fragments/sidebar :: sidebar('dashboard')}"></div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <div>
+                <h1 th:text="'Habari, ' + ${user.fullName} + ' 👋'">Habari</h1>
+                <p>Here's how your savings are shaping up.</p>
+            </div>
+            <a th:href="@{/goals/new}" class="btn btn-primary">+ New goal</a>
+        </div>
+
+        <div class="grid grid-3" style="margin-bottom: 24px;">
+            <div class="stat-card neu-raised-sm">
+                <div class="label">Wallet balance</div>
+                <div class="value">KES <span class="accent" th:text="${#numbers.formatDecimal(user.walletBalance, 1, 2)}">0.00</span></div>
+            </div>
+            <div class="stat-card neu-raised-sm">
+                <div class="label">Active goals</div>
+                <div class="value" th:text="${goals.size()}">0</div>
+            </div>
+            <div class="streak-widget neu-raised-sm">
+                <div class="streak-flame">🔥</div>
+                <div>
+                    <div class="label">Current streak</div>
+                    <div class="value" th:text="${user.currentStreakDays} + ' days'">0 days</div>
+                </div>
+            </div>
+        </div>
+
+        <h3 style="margin-bottom: 14px;">Your goals</h3>
+        <div class="grid grid-3" th:if="${!goals.isEmpty()}">
+            <div class="goal-card neu-raised-sm" th:each="goal : ${goals}">
+                <div class="icon-badge neu-flat" th:text="${goal.icon != null ? goal.icon : '🎯'}">🎯</div>
+                <h3 th:text="${goal.name}">Goal name</h3>
+                <div class="progress-track">
+                    <div class="progress-fill" th:style="'width: ' + ${goal.progressPercent > 100 ? 100 : goal.progressPercent} + '%'"></div>
+                </div>
+                <div class="amounts">
+                    <span>Saved: <strong th:text="'KES ' + ${#numbers.formatDecimal(goal.currentAmount, 1, 0)}">0</strong></span>
+                    <span>Target: <strong th:text="'KES ' + ${#numbers.formatDecimal(goal.targetAmount, 1, 0)}">0</strong></span>
+                </div>
+                <a th:href="@{/goals/{id}(id=${goal.id})}" class="btn btn-sm btn-block">View goal</a>
+            </div>
+        </div>
+        <div class="empty-state neu-raised" th:if="${goals.isEmpty()}">
+            <p>No goals yet. Create your first one to start saving.</p>
+            <a th:href="@{/goals/new}" class="btn btn-primary">+ New goal</a>
+        </div>
+
+        <h3 style="margin: 28px 0 14px 0;">Recent activity</h3>
+        <div class="card neu-raised-sm">
+            <div th:if="${recentTransactions.isEmpty()}" class="empty-state">
+                <p>No transactions yet.</p>
+            </div>
+            <div class="txn-row" th:each="txn : ${recentTransactions}">
+                <div class="txn-left">
+                    <div class="txn-icon" th:text="${txn.type.name() == 'DEPOSIT' ? '⬇️' : (txn.type.name() == 'GROUP_CONTRIBUTION' ? '👥' : '⬆️')}">⬇️</div>
+                    <div class="txn-meta">
+                        <span class="title" th:text="${txn.type}">DEPOSIT</span>
+                        <span class="subtitle" th:text="${#temporals.format(txn.createdAt, 'dd MMM yyyy, HH:mm')}">date</span>
+                    </div>
+                </div>
+                <div class="txn-amount positive" th:text="'+KES ' + ${#numbers.formatDecimal(txn.amount, 1, 2)}">+KES 0.00</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

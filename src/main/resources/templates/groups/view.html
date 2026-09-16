@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${group.name} + ' · Chumz Clone'">Group · Chumz Clone</title>
+    <link rel="stylesheet" th:href="@{/css/neumorphism.css}">
+</head>
+<body>
+
+<div class="app-shell">
+    <div th:replace="~{fragments/sidebar :: sidebar('groups')}"></div>
+
+    <div class="main-content" style="max-width: 680px;">
+        <div class="page-header">
+            <div>
+                <h1 th:text="${group.name}">Group name</h1>
+                <p th:text="${group.description}">Description</p>
+            </div>
+            <span class="badge badge-muted" th:text="'Code: ' + ${group.inviteCode}">CHM-XXXXXX</span>
+        </div>
+
+        <div class="alert alert-success" th:if="${message}" th:text="${message}"></div>
+
+        <div class="card neu-raised" style="margin-bottom: 22px;">
+            <div class="progress-track" style="height: 20px; margin-bottom: 14px;" th:if="${group.groupTargetAmount.compareTo(T(java.math.BigDecimal).ZERO) > 0}">
+                <div class="progress-fill"
+                     th:style="'width: ' + ${group.groupCurrentAmount.doubleValue() / group.groupTargetAmount.doubleValue() * 100 > 100 ? 100 : group.groupCurrentAmount.doubleValue() / group.groupTargetAmount.doubleValue() * 100} + '%'"></div>
+            </div>
+            <div class="amounts" style="font-size: 1rem;">
+                <span>Pooled: <strong th:text="'KES ' + ${#numbers.formatDecimal(group.groupCurrentAmount, 1, 2)}">0.00</strong></span>
+                <span th:if="${group.groupTargetAmount.compareTo(T(java.math.BigDecimal).ZERO) > 0}">
+                    Target: <strong th:text="'KES ' + ${#numbers.formatDecimal(group.groupTargetAmount, 1, 2)}">0.00</strong>
+                </span>
+            </div>
+        </div>
+
+        <div class="card neu-raised" style="margin-bottom: 22px;">
+            <h3 style="margin-top:0;">Contribute</h3>
+            <form th:action="@{/groups/{id}/contribute(id=${group.id})}" method="post">
+                <div class="field">
+                    <label for="amount">Amount (KES)</label>
+                    <input type="number" id="amount" name="amount" min="5" step="0.01" placeholder="500" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Contribute now</button>
+            </form>
+        </div>
+
+        <h3>Members</h3>
+        <div class="card neu-raised-sm">
+            <div class="txn-row" th:each="m : ${members}">
+                <div class="txn-left">
+                    <div class="txn-icon">👤</div>
+                    <div class="txn-meta">
+                        <span class="title" th:text="${m.user.fullName}">Member</span>
+                        <span class="subtitle" th:text="${m.role}">MEMBER</span>
+                    </div>
+                </div>
+                <div class="txn-amount positive" th:text="'KES ' + ${#numbers.formatDecimal(m.totalContributed, 1, 2)}">0.00</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

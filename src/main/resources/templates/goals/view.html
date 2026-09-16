@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${goal.name} + ' · Chumz Clone'">Goal · Chumz Clone</title>
+    <link rel="stylesheet" th:href="@{/css/neumorphism.css}">
+</head>
+<body>
+
+<div class="app-shell">
+    <div th:replace="~{fragments/sidebar :: sidebar('goals')}"></div>
+
+    <div class="main-content" style="max-width: 640px;">
+        <div class="page-header">
+            <div>
+                <h1 th:text="${goal.icon != null ? goal.icon + ' ' : ''} + ${goal.name}">Goal</h1>
+                <p th:if="${goal.targetDate}" th:text="'Target date: ' + ${#temporals.format(goal.targetDate, 'dd MMM yyyy')}">Target date</p>
+            </div>
+            <span class="badge" th:classappend="${goal.status.name() == 'COMPLETED'} ? 'badge-success' : 'badge-muted'" th:text="${goal.status}">ACTIVE</span>
+        </div>
+
+        <div class="alert alert-success" th:if="${message}" th:text="${message}"></div>
+
+        <div class="card neu-raised" style="margin-bottom: 22px;">
+            <div class="progress-track" style="height: 20px; margin-bottom: 14px;">
+                <div class="progress-fill" th:style="'width: ' + ${goal.progressPercent > 100 ? 100 : goal.progressPercent} + '%'"></div>
+            </div>
+            <div class="amounts" style="font-size: 1rem;">
+                <span>Saved: <strong th:text="'KES ' + ${#numbers.formatDecimal(goal.currentAmount, 1, 2)}">0.00</strong></span>
+                <span>Target: <strong th:text="'KES ' + ${#numbers.formatDecimal(goal.targetAmount, 1, 2)}">0.00</strong></span>
+            </div>
+        </div>
+
+        <div class="card neu-raised">
+            <h3 style="margin-top:0;">Make a deposit</h3>
+            <p style="color: var(--text-secondary); font-size: 0.85rem;">
+                This triggers an M-Pesa STK push to your phone (Daraja sandbox). Enter your PIN to confirm.
+            </p>
+            <form th:action="@{/goals/{id}/deposit(id=${goal.id})}" method="post">
+                <div class="field">
+                    <label for="amount">Amount (KES)</label>
+                    <input type="number" id="amount" name="amount" min="5" step="0.01" placeholder="500" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Save now</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

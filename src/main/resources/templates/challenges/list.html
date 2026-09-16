@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Challenges · Chumz Clone</title>
+    <link rel="stylesheet" th:href="@{/css/neumorphism.css}">
+</head>
+<body>
+
+<div class="app-shell">
+    <div th:replace="~{fragments/sidebar :: sidebar('challenges')}"></div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <div>
+                <h1>Savings challenges</h1>
+                <p>Gamify your saving habit — join a challenge and build a streak.</p>
+            </div>
+        </div>
+
+        <h3 style="margin-bottom:14px;" th:if="${!myChallenges.isEmpty()}">Your active challenges</h3>
+        <div class="grid grid-3" style="margin-bottom: 30px;" th:if="${!myChallenges.isEmpty()}">
+            <div class="goal-card neu-raised-sm" th:each="uc : ${myChallenges}">
+                <div class="icon-badge neu-flat">🏆</div>
+                <h3 th:text="${uc.challenge.name}">Challenge</h3>
+                <span class="badge" th:classappend="${uc.status.name() == 'COMPLETED'} ? 'badge-success' : 'badge-warning'" th:text="${uc.status}">IN_PROGRESS</span>
+                <div class="amounts">
+                    <span>Saved: <strong th:text="'KES ' + ${#numbers.formatDecimal(uc.totalSaved, 1, 0)}">0</strong></span>
+                    <span th:if="${uc.challenge.durationDays}">Day: <strong th:text="${uc.currentWeekOrDay} + '/' + ${uc.challenge.durationDays}">1/52</strong></span>
+                </div>
+            </div>
+        </div>
+
+        <h3 style="margin-bottom:14px;">Available challenges</h3>
+        <div class="grid grid-3" th:if="${!challenges.isEmpty()}">
+            <div class="goal-card neu-raised-sm" th:each="c : ${challenges}">
+                <div class="icon-badge neu-flat">🎯</div>
+                <h3 th:text="${c.name}">Challenge name</h3>
+                <p style="color: var(--text-secondary); font-size: 0.85rem; margin: 0;" th:text="${c.description}">Description</p>
+                <form th:action="@{/challenges/{id}/enroll(id=${c.id})}" method="post">
+                    <button type="submit" class="btn btn-primary btn-block">Join challenge</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="empty-state neu-raised" th:if="${challenges.isEmpty()}">
+            <p>No challenges have been set up yet. Ask an admin to seed some (52-Week Envelope, Round-Up, Daily Fixed).</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

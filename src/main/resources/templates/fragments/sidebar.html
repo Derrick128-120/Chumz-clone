@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="sidebar(active)" class="sidebar neu-raised" style="margin: 16px 0 16px 16px; height: calc(100vh - 32px); position: sticky; top: 16px;">
+    <div class="sidebar-brand">
+        <span class="dot"></span>
+        <span>Chumz Clone</span>
+    </div>
+
+    <a th:href="@{/dashboard}" class="nav-link" th:classappend="${active == 'dashboard'} ? 'active'">
+        <span>🏠</span><span>Dashboard</span>
+    </a>
+    <a th:href="@{/goals}" class="nav-link" th:classappend="${active == 'goals'} ? 'active'">
+        <span>🎯</span><span>Goals</span>
+    </a>
+    <a th:href="@{/groups}" class="nav-link" th:classappend="${active == 'groups'} ? 'active'">
+        <span>👥</span><span>Groups</span>
+    </a>
+    <a th:href="@{/challenges}" class="nav-link" th:classappend="${active == 'challenges'} ? 'active'">
+        <span>🏆</span><span>Challenges</span>
+    </a>
+    <a th:href="@{/reports}" class="nav-link" th:classappend="${active == 'reports'} ? 'active'">
+        <span>📊</span><span>Reports</span>
+    </a>
+
+    <div style="flex:1;"></div>
+
+    <form th:action="@{/auth/logout}" method="post">
+        <button type="submit" class="nav-link" style="width:100%; border:none; background:transparent; cursor:pointer; text-align:left; font: inherit;">
+            <span>🚪</span><span>Logout</span>
+        </button>
+    </form>
+</div>
+
+</body>
+</html>
